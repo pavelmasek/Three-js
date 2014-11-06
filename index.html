@@ -55,7 +55,7 @@
 		var t = THREE;
 
 		var scene = new t.Scene();
-		var camera = new t.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000 );
+		var camera = new t.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000 );
 		var renderer = new t.WebGLRenderer();
 
 		renderer.setSize(window.innerWidth, window.innerHeight);
@@ -76,7 +76,8 @@
 		var material = new t.ShaderMaterial({
 			vertexShader: document.getElementById('vertexShader').textContent,
 			fragShader: document.getElementById('fragmentShader').textContent,
-			wireframe: true
+			wireframe: false,
+			side: t.DoubleSide
 		})
 		var plane = new t.Mesh(geometry, material);
 
