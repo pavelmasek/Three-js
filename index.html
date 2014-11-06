@@ -18,22 +18,75 @@
 			height: 100%;
 		}
 	</style>
+	<script id="vertexShader" type="x-shader/x-vertex">
+		uniform float mixAmount;
+		varying vec2 vUv;
+		varying vec4 myTest;
+
+		void main() 
+		{ 
+		    vUv = uv;
+		    float s = position.x * 2.0 - 1.0;
+			float t = position.y * 2.0 - 1.0;
+			
+			vec3 myPosition = vec3(s, t, s * s - t * t);
+			myTest =  projectionMatrix * modelViewMatrix * vec4(myPosition,1.0);
+		    gl_Position = myTest;
+		}
+		</script>
+
+		<!-- fragment shader a.k.a. pixel shader -->
+		<script id="fragmentShader" type="x-shader/x-vertex"> 
+		
+		varying vec2 vUv;
+		varying vec4 myTest;
+
+		void main() 
+		{
+		    gl_FragColor = myTest;
+		}  
+		</script>
 </head>
 <body>
 </body>
 	<script type="text/javascript">
 
-		var scene = new THREE.Scene();
-		var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-		var renderer = new THREE.WebGLRenderer();
+		var controls;
+		var t = THREE;
+
+		var scene = new t.Scene();
+		var camera = new t.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000 );
+		var renderer = new t.WebGLRenderer();
 
 		renderer.setSize(window.innerWidth, window.innerHeight);
 		document.body.appendChild(renderer.domElement);
+
+		controls = new t.OrbitControls(camera, renderer.domElement);
+
+		camera.position.z = 25;
+		camera.position.x = 2;
+		camera.position.y = 5;
+
+		var light = new t.PointLight(0xffffff);
+		light.position.set(0, 250, 0);
+		scene.add(light);
+
+		var geometry = new t.PlaneGeometry(15, 15, 15, 15);
+		// var material = new t.MeshBasicMaterial({color: 0xffffff, wireframe: true});
+		var material = new t.ShaderMaterial({
+			vertexShader: document.getElementById('vertexShader').textContent,
+			fragShader: document.getElementById('fragmentShader').textContent,
+			wireframe: true
+		})
+		var plane = new t.Mesh(geometry, material);
+
+		scene.add(plane);
 
 		render();
 
 		function render(){
 			renderer.render(scene, camera);
+			controls.update();
 			requestAnimationFrame(render);
 		}
 
