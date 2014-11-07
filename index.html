@@ -23,7 +23,10 @@
 		varying vec2 vUv;
 		varying vec3 vPosition;
 		varying vec3 vNormal;
+		varying vec3 vTest;
+
 		uniform vec3 vLight;
+		
 		attribute float pi;
 
 		vec3 paramPos(vec3 inPos){
@@ -33,11 +36,11 @@
 		}
 
 		vec3 torus(vec3 inPos){
-			float t = sqrt(((inPos.x*inPos.x + inPos.y*inPos.y)*cos(3.14*2.0)*cos(3.14*2.0))/sin(3.14*2.0)*sin(3.14*2.0));
+			float t = sqrt(((inPos.x*inPos.x + inPos.y*inPos.y)*cos(pi*2.0)*cos(pi*2.0))/sin(pi*2.0)*sin(pi*2.0));
 			//vTest = t;
 			t = min(1.0, t);
-			float y = t * sin(3.14*2.0);
-			float x = t * cos(3.14*2.0);
+			float y = t * sin(pi*2.0);
+			float x = t * cos(pi*2.0);
 			//vTest = t;
 			return vec3(inPos.x, inPos.y, t);
 		}
@@ -56,6 +59,7 @@
 		varying vec2 vUv;
 		varying vec3 vPosition;
 		varying vec3 vNormal;
+		varying vec3 vTest;
 
 		uniform vec3 vLight;
 		uniform sampler2D texture1;
@@ -97,9 +101,41 @@
 
 		controls = new t.OrbitControls(camera, renderer.domElement);
 
+		stats = new Stats();
+		stats.domElement.style.position = 'absolute';
+		stats.domElement.style.bottom = '0px';
+		stats.domElement.style.zIndex = 100;
+		document.body.appendChild(stats.domElement);
+
 		camera.position.z = 2;
 		camera.position.x = 2;
 		camera.position.y = 2;
+
+		//GUI START
+		var gui = new dat.GUI();
+
+		var guiParameters = {
+			x: 0
+		};
+
+		var coordinatesFolder = gui.addFolder("Coordinates");
+		coordinatesFolder.add({x: 0}, 'x');
+		coordinatesFolder.add({y: 0}, 'y');
+		coordinatesFolder.add({z: 0}, 'z');
+		coordinatesFolder.open();
+		var functionFolder = gui.addFolder("Function");
+		functionFolder.add({func: 'sothers'}, 'func');
+		functionFolder.open();
+
+		var cubeColor = gui.addColor({color: "#ff0000"}, 'color');
+		cubeColor.onChange(function(value){
+			console.log('change')
+		});
+
+		gui.open();
+
+		//GUI END
+
 
 		var light = new t.PointLight(0xffffff);
 		light.position.set(0, 15, 0);
@@ -124,7 +160,7 @@
 			vertexShader: document.getElementById('vertexShader').textContent,
 			fragmentShader: document.getElementById('fragmentShader').textContent,
 			attributes: attributes,
-			wireframe: true,
+			wireframe: false,
 			side: t.DoubleSide,
 			lights: false
 		})
@@ -138,6 +174,7 @@
 		function render(){
 			renderer.render(scene, camera);
 			controls.update();
+			stats.update();
 			requestAnimationFrame(render);
 		}
 
