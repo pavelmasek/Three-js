@@ -91,16 +91,116 @@
 			vUv = uv;
 			vPosition = position;
 
-			float s = position.x * 2 * MPI; 
-		    float t = position.y * MPI; 
-		    float theta = s;
-		    float phi = t;
-		    float rho = 1.0+0.2*sin(6.0*s)*sin(5.0*t);
+
+
+			float azimuth = position.x * 2.0 * PI; 
+		    float zenith = position.y * PI;
+		    
+		    float rho = 1.0 + 0.2 * sin(6.0 * azimuth) * sin(5.0 * zenith);
 		    
 
-		    vPosition.x  = t;
-		    vPosition.y  = s;
-		    vPosition.z  = rho;
+		    vPosition.x  = rho * sin(azimuth) * cos(zenith);
+		    vPosition.y  = rho * sin(azimuth) * sin(zenith);
+		    vPosition.z  = rho * cos(azimuth);
+			vLightVec = normalize(vLight - position);
+
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(vPosition, 1.0);
+		}
+
+	</script>
+
+	<script id="vertexShaderCylindrical" type="x-shader/x-vertex">
+		
+		varying vec2 vUv;
+		varying vec3 vPosition;
+		varying vec3 vLightVec;
+
+		uniform vec3 vLight;
+
+		const float PI = 3.14159265359;
+
+		void main(){
+			vUv = uv;
+			vPosition = position;
+
+
+
+			float s = position.y * 2.0 * PI; 
+		    float t = position.x * 2.0 * PI; 
+		    float theta = s;
+		    float r = t;
+		    
+
+		    vPosition.x  = r*sin(theta);
+		    vPosition.y  = r*cos(theta);
+		    vPosition.z  = 2.0*sin(t);
+
+			vLightVec = normalize(vLight - position);
+
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(vPosition, 1.0);
+		}
+
+	</script>
+
+	<script id="vertexShaderCylindrical2" type="x-shader/x-vertex">
+		
+		varying vec2 vUv;
+		varying vec3 vPosition;
+		varying vec3 vLightVec;
+
+		uniform vec3 vLight;
+
+		const float PI = 3.14159265359;
+		const float E = 2.71828;
+
+		void main(){
+			vUv = uv;
+			vPosition = position;
+
+
+
+			float s = position.x * -2.0 * PI; 
+		    float t = position.y * 2.0 * PI; 
+		    float theta = s;
+		    float r = t;
+		    
+
+		    vPosition.x  = r*sin(s);
+		    vPosition.y  = r*cos(s);
+		    vPosition.z  = 2.0*t/E;
+
+			vLightVec = normalize(vLight - position);
+
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(vPosition, 1.0);
+		}
+
+	</script>
+
+	<script id="vertexShaderSpherical2" type="x-shader/x-vertex">
+		
+		varying vec2 vUv;
+		varying vec3 vPosition;
+		varying vec3 vLightVec;
+
+		uniform vec3 vLight;
+
+		const float PI = 3.14159265359;
+
+		void main(){
+			vUv = uv;
+			vPosition = position;
+
+
+
+			float azimuth = position.x * 2.0 * PI; 
+		    float zenith = position.y * PI;
+		    
+		    float rho = 1.0 + sin(2.0*zenith);
+		    
+
+		    vPosition.x  = rho * sin(azimuth) * cos(zenith);
+		    vPosition.y  = rho * sin(azimuth) * sin(zenith);
+		    vPosition.z  = rho * cos(azimuth);
 			vLightVec = normalize(vLight - position);
 
 			gl_Position = projectionMatrix * modelViewMatrix * vec4(vPosition, 1.0);

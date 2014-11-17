@@ -40,21 +40,36 @@ function guiInit(){
 
 	// var wireFrame = gui.add(wireframe,'wireframe');
 
-	var shapeOption = gui.add({shape: 'tube'}, 'shape', ['tube', 'other']).listen();
+	var shapeOption = gui.add({shape: 'tube'}, 'shape', ['tube - cartesian', 'spin - cartesian', 'bumpy - spherical', 'lantern - spherical', 'lantern - cylindrical', 'lantern - cylindrical2']).listen();
 	shapeOption.onChange(function(value){
 		switch(value){
-			case "tube": 
-				shape.material.vertexShader = document.getElementById('vertexShader').textContent;
+			case "tube - cartesian": 
+				shape.material.vertexShader = document.getElementById('vertexShaderCartesian').textContent;
 				shape.material.fragmentShader = document.getElementById('fragmentShader').textContent;
 				shape.material.needsUpdate = true;
 				break;
-			case "other":
-				shape.material.vertexShader = document.getElementById('vertexShader2').textContent;
+			case "spin - cartesian":
+				shape.material.vertexShader = document.getElementById('vertexShaderCartesian2').textContent;
 				shape.material.fragmentShader = document.getElementById('fragmentShader').textContent;
 				shape.material.needsUpdate = true;
 				break;
-			case "other":
-				shape.material.vertexShader = document.getElementById('vertexShader2').textContent;
+			case "bumpy - spherical":
+				shape.material.vertexShader = document.getElementById('vertexShaderSpherical').textContent;
+				shape.material.fragmentShader = document.getElementById('fragmentShader').textContent;
+				shape.material.needsUpdate = true;
+				break;
+			case "lantern - spherical":
+				shape.material.vertexShader = document.getElementById('vertexShaderSpherical2').textContent;
+				shape.material.fragmentShader = document.getElementById('fragmentShader').textContent;
+				shape.material.needsUpdate = true;
+				break;
+			case "lantern - cylindrical":
+				shape.material.vertexShader = document.getElementById('vertexShaderCylindrical').textContent;
+				shape.material.fragmentShader = document.getElementById('fragmentShader').textContent;
+				shape.material.needsUpdate = true;
+				break;
+			case "lantern - cylindrical2":
+				shape.material.vertexShader = document.getElementById('vertexShaderCylindrical2').textContent;
 				shape.material.fragmentShader = document.getElementById('fragmentShader').textContent;
 				shape.material.needsUpdate = true;
 				break;
