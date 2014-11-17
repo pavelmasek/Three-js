@@ -9,6 +9,7 @@
 	<script src="src/libs/OrbitControls.js"></script>
 	<script src="src/libs/Detector.js"></script>
 	<script src="src/libs/DAT.GUI.js"></script>
+	<script src="src/gui-init.js"></script>
 	<style type="text/css">
 		body{
 			margin: 0;
@@ -163,31 +164,8 @@
 		camera.position.x = 2;
 		camera.position.y = 2;
 
-		//GUI START
-		var gui = new dat.GUI();
-
-		var guiParameters = {
-			x: 0
-		};
-
-		var coordinatesFolder = gui.addFolder("Coordinates");
-		coordinatesFolder.add({x: 0}, 'x');
-		coordinatesFolder.add({y: 0}, 'y');
-		coordinatesFolder.add({z: 0}, 'z');
-		coordinatesFolder.open();
-		var functionFolder = gui.addFolder("Function");
-		functionFolder.add({func: 'sothers'}, 'func');
-		functionFolder.open();
-
-		var cubeColor = gui.addColor({color: "#ff0000"}, 'color');
-		cubeColor.onChange(function(value){
-			console.log('change')
-		});
-
-		gui.open();
-
-		//GUI END
-
+		
+		guiInit();
 
 		var light = new t.PointLight(0xffffff);
 		light.position.set(0, 5, 0);
