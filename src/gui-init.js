@@ -8,41 +8,41 @@ function guiInit(){
 
 	var coordinatesFolder = gui.addFolder("Coordinates");
 	coordinatesFolder.add({x: 0}, 'x').onChange(function(value){
-		object.position.x = value;
+		shape.position.x = value;
 	});
 	coordinatesFolder.add({y: 0}, 'y').onChange(function(value){
-		object.position.y = value;
+		shape.position.y = value;
 	});
 	coordinatesFolder.add({z: 0}, 'z').onChange(function(value){
-		object.position.z = value;
+		shape.position.z = value;
 	});
 	coordinatesFolder.open();
 	
-	// var textureOption = gui.add({texture: 'metal'}, 'texture', ['brick', 'metal', 'rock']).listen();
-	// textureOption.onChange(function(value){
-	// 	switch(value){
-	// 		case "brick": 
-	// 			textureType = textures[1];
-	// 			object.material.uniforms.texture.value = setTexture(textureType.diffuse);
-	// 			object.material.uniforms.normalTexture.value = setTexture(textureType.normal);
-	// 			object.material.uniforms.heightTexture.value = setTexture(textureType.height);
-	// 			break;
-	// 		case "metal": 
-	// 			textureType = textures[2];
-	// 			object.material.uniforms.texture.value = setTexture(textureType.diffuse);
-	// 			object.material.uniforms.normalTexture.value = setTexture(textureType.normal);
-	// 			object.material.uniforms.heightTexture.value = setTexture(textureType.height);
-	// 			break;
-	// 		case "rock": 
-	// 			textureType = textures[0];
-	// 			object.material.uniforms.texture.value = setTexture(textureType.diffuse);
-	// 			object.material.uniforms.normalTexture.value = setTexture(textureType.normal);
-	// 			object.material.uniforms.heightTexture.value = setTexture(textureType.height);
-	// 			break;
-	// 		default:
-	// 			console.log('default texture'); 	
-	// 	}
-	// });
+	var textureOption = gui.add({texture: 'brick'}, 'texture', ['brick', 'metal', 'rock']).listen();
+	textureOption.onChange(function(value){
+		switch(value){
+			case "brick": 
+				textureType = textures[1];
+				shape.material.uniforms.texture.value = setTexture(textureType.diffuse);
+				shape.material.uniforms.normalTexture.value = setTexture(textureType.normal);
+				shape.material.uniforms.heightTexture.value = setTexture(textureType.height);
+				break;
+			case "metal": 
+				textureType = textures[2];
+				shape.material.uniforms.texture.value = setTexture(textureType.diffuse);
+				shape.material.uniforms.normalTexture.value = setTexture(textureType.normal);
+				shape.material.uniforms.heightTexture.value = setTexture(textureType.height);
+				break;
+			case "rock": 
+				textureType = textures[0];
+				shape.material.uniforms.texture.value = setTexture(textureType.diffuse);
+				shape.material.uniforms.normalTexture.value = setTexture(textureType.normal);
+				shape.material.uniforms.heightTexture.value = setTexture(textureType.height);
+				break;
+			default:
+				console.log('default texture'); 	
+		}
+	});
 
 	// var wireFrame = gui.add(wireframe,'wireframe');
 
@@ -50,15 +50,19 @@ function guiInit(){
 	shapeOption.onChange(function(value){
 		switch(value){
 			case "tube": 
-				object.material.vertexShader = document.getElementById('vertexShader').textContent;
-				object.material.fragmentShader = document.getElementById('fragmentShader').textContent;
-				object.material.needsUpdate = true;
+				shape.material.vertexShader = document.getElementById('vertexShader').textContent;
+				shape.material.fragmentShader = document.getElementById('fragmentShader').textContent;
+				shape.material.needsUpdate = true;
 				break;
 			case "other":
-				object.material.vertexShader = document.getElementById('vertexShader2').textContent;
-				object.material.fragmentShader = document.getElementById('fragmentShader2').textContent;
-				object.material.needsUpdate = true;
-				console.log('other');
+				shape.material.vertexShader = document.getElementById('vertexShader2').textContent;
+				shape.material.fragmentShader = document.getElementById('fragmentShader').textContent;
+				shape.material.needsUpdate = true;
+				break;
+			case "other":
+				shape.material.vertexShader = document.getElementById('vertexShader2').textContent;
+				shape.material.fragmentShader = document.getElementById('fragmentShader').textContent;
+				shape.material.needsUpdate = true;
 				break;
 			default: 
 				console.log('default');

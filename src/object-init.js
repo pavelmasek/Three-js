@@ -45,7 +45,7 @@ function createObject(){
 		"texture": { type: 't', value: texture},
 		"normalTexture": {type: 't', value: normalTexture},
 		"heightTexture": {type: 't', value: heightTexture},
-		"resolution": {type: 'v2', value: resolution }
+		"camPosition": {type: 'v3', value: camera.position}
 	}
 
 	var attributes = {
@@ -66,5 +66,6 @@ function createObject(){
 function setTexture(texturePath){
 	var texture = new t.ImageUtils.loadTexture(texturePath);
 	texture.wrapS = textureWrapT = t.RepeatWrapping;
+	texture.repeat.set(0.5,0.5);
 	return texture;
 }

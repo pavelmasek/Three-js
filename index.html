@@ -21,37 +21,37 @@
 		}
 	</style>
 
-	<script id="vertexShader2" type="x-shader/x-vertex">
+	<script id="vertexShaderCartesian2" type="x-shader/x-vertex">
 		
-		varying vec3 vPosition;
 		varying vec2 vUv;
+		varying vec3 vPosition;
+		varying vec3 vLightVec;
+
+		uniform vec3 vLight;
+
+		const float PI = 3.14159265359;
 
 		void main(){
 			vUv = uv;
 			vPosition = position;
-			vPosition.z  = sin(position.x) *sin(position.y) ;
+
+			float s = 2.0 * PI * position.x;
+			
+			float t = position.y;
+
+			vPosition.z = t * cos(s);
+			vPosition.y = t * sin(s);
+			vLightVec = normalize(vLight - position);
 			gl_Position = projectionMatrix * modelViewMatrix * vec4(vPosition, 1.0);
 		}
 
 	</script>
 
-	<script id="fragmentShader2" type="x-shader/x-fragment"> 
-		varying vec3 vPosition;
-
-		void main(){
-			gl_FragColor = vec4(vPosition, 1.0);
-		}
-
-	</script>
-
-	<script id="vertexShader" type="x-shader/x-vertex">
+	<script id="vertexShaderCartesian" type="x-shader/x-vertex">
 		
 		varying vec2 vUv;
 		varying vec3 vPosition;
-		varying vec3 vNormal;
-		varying vec3 vTest;
 		varying vec3 vLightVec;
-		varying vec3 vColor;
 
 		uniform vec3 vLight;
 		
@@ -77,32 +77,60 @@
 		}
 		</script>
 
+		<script id="vertexShaderSpherical" type="x-shader/x-vertex">
+		
+		varying vec2 vUv;
+		varying vec3 vPosition;
+		varying vec3 vLightVec;
+
+		uniform vec3 vLight;
+
+		const float PI = 3.14159265359;
+
+		void main(){
+			vUv = uv;
+			vPosition = position;
+
+			float s = position.x * 2 * MPI; 
+		    float t = position.y * MPI; 
+		    float theta = s;
+		    float phi = t;
+		    float rho = 1.0+0.2*sin(6.0*s)*sin(5.0*t);
+		    
+
+		    vPosition.x  = t;
+		    vPosition.y  = s;
+		    vPosition.z  = rho;
+			vLightVec = normalize(vLight - position);
+
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(vPosition, 1.0);
+		}
+
+	</script>
+
 		<!-- fragment shader a.k.a. pixel shader -->
 		<script id="fragmentShader" type="x-shader/x-fragment"> 
 		
 		varying vec2 vUv;
 		varying vec3 vPosition;
-		varying vec3 vNormal;
-		varying vec3 vTest;
 		varying vec3 vLightVec;
-		varying vec3 vColor;
 
-		uniform vec3 vLight;
-		uniform vec4 vLightColor;
+		uniform vec3 vLightColor;
 		uniform sampler2D texture;
 		uniform sampler2D normalTexture;
 		uniform sampler2D heightTexture;
-		uniform vec2 resolution;
+		uniform vec3 camPosition;
 
-		vec4 Diffuse = vec4(1.0, 1.0, 0.8, 1);
-		vec4 Ambient = vec4(0.4470, 0.4274, 0.4274, 1);
-		vec4 Specular = vec4(0.7059, 0.7368, 0.6806, 1);
+		vec4 Ambient = vec4(0.3, 0.3, 0.3, 1);
+		vec4 Specular = vec4(0.9, 0.9, 0.9, 1);
 
 		vec2 cBumpSize = vec2 (0.04, -0.02);
 
 		void main() 
 		{
-			vec3 viewVec = vec3(0.5, 0.5, 0.5);
+			vec4 Diffuse = vec4(vLightColor, 1.0);
+
+			vec3 viewVec = normalize(camPosition);
 
 			float height = texture2D(heightTexture, vUv).r;
 
@@ -126,13 +154,11 @@
 
 			vec4 specular = Specular * pow(NdotHV, 10.0);
 
-
-
-
-
 		    gl_FragColor = vec4(color.xyz * (diffuse.xyz + specular.xyz + Ambient.rgb), 1.0) * color;
 		}  
 		</script>
+
+
 </head>
 <body>
 </body>
@@ -162,9 +188,9 @@
 
 		guiInit();
 
-		var object = createObject();
+		var shape = createObject();
 	
-		object.material.needsUpdate = true;
+		shape.material.needsUpdate = true;
 
 		var axisHelper = new t.AxisHelper(1);
 
@@ -178,7 +204,7 @@
 		scene.add(camera);
 		scene.add(sphereLight);
 		scene.add(axisHelper);
-		scene.add(object);
+		scene.add(shape);
 
 		render();
 
