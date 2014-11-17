@@ -9,8 +9,8 @@
 	<script src="src/libs/OrbitControls.js"></script>
 	<script src="src/libs/Detector.js"></script>
 	<script src="src/libs/DAT.GUI.js"></script>
-	<script src="src/gui-init.js"></script>
 	<script src="src/object-init.js"></script>
+	<script src="src/gui-init.js"></script>
 	<style type="text/css">
 		body{
 			margin: 0;
@@ -26,29 +26,13 @@
 		varying vec3 vPosition;
 		varying vec3 vNormal;
 		varying vec3 vTest;
+		varying vec3 vLightVec;
+		varying vec3 vColor;
 
 		uniform vec3 vLight;
 		
 		const float PI = 3.14159265359;
-
-
-		vec3 paramPos(vec3 inPos){
-			float s = inPos.x * 2.0 - 1.0;
-			float t = inPos.y * 2.0 - 1.0;
-			return vec3(s, t, s * s - t * t);
-		}
-
-		vec3 torus(vec3 inPos){
-							//
-			float t = sqrt(((inPos.x*inPos.x + inPos.y*inPos.y)*cos(PI*2.0)*cos(PI*2.0))/sin(PI*2.0)*sin(PI*2.0));
-			//vTest = t;
-			t = min(1.0, t);
-			// float y = t * sin(pi*2.0);
-			// float x = t * cos(pi*2.0);
-			//vTest = t;
-			return vec3(inPos.x, inPos.y, t);
-		}
-
+		
 		vec3 cylinder(vec3 inPos){
 			float length = 2.0;
 			float y = inPos.y;
@@ -64,6 +48,7 @@
 		{ 
 		    vUv = uv;
 			vPosition = cylinder(position);
+			vLightVec = normalize(vLight - position);
 		    gl_Position = projectionMatrix * modelViewMatrix * vec4(vPosition,1.0);
 		}
 		</script>
@@ -75,67 +60,53 @@
 		varying vec3 vPosition;
 		varying vec3 vNormal;
 		varying vec3 vTest;
+		varying vec3 vLightVec;
+		varying vec3 vColor;
 
 		uniform vec3 vLight;
 		uniform vec4 vLightColor;
-		uniform sampler2D texture1;
+		uniform sampler2D texture;
 		uniform sampler2D normalTexture;
+		uniform sampler2D heightTexture;
 		uniform vec2 resolution;
 
-		vec3 paramNormal(vec3 inPos){
-			vec3 tx = vec3(2.0, 0.0, 8.0 * inPos.x);
-			vec3 ty = vec3(0.0, 2.0, -8.0 * inPos.y);
-			return cross(tx, ty);
-		}
+		vec4 Diffuse = vec4(1.0, 1.0, 0.8, 1);
+		vec4 Ambient = vec4(0.4470, 0.4274, 0.4274, 1);
+		vec4 Specular = vec4(0.7059, 0.7368, 0.6806, 1);
+
+		vec2 cBumpSize = vec2 (0.04, -0.02);
 
 		void main() 
 		{
-			vec3 light = normalize(vLight);
-			vec3 position = paramNormal(vPosition);
-			vec3 normal = paramNormal(vNormal);
+			vec3 viewVec = vec3(0.5, 0.5, 0.5);
 
-			vec3 lightVec = light - position; 
+			float height = texture2D(heightTexture, vUv).r;
 
-			float diff = dot(normalize(vNormal), normalize(vLight));
-			diff = max(0.1, diff);
+			height = height * cBumpSize.x + cBumpSize.y;
 
-			vec3 specColor = vec3(1.0, 1.0, 1.0);
-			float lambertian = max(dot(vLight, vNormal), 0.0);
-			float specular = 0.0;
-			if(lambertian > 0.0){
-				float specAngle = max(dot(reflect(-vLight, vNormal), normalize(vPosition)), 0.0);
-				specular = pow(specAngle, 4.0);
-			}
+			vec2 texUV = vUv.xy + viewVec.xy * height;
 
-			vec4 rTexture = texture2D(texture1, vUv);
-			vec3 rLight = lambertian + specular * specColor;
+			vec4 color = texture2D(texture, vUv);
 
-			rTexture.xyz += rLight;
+			vec3 bumb = texture2D(normalTexture, texUV.xy).rgb * 2.0 - 1.0;
 
-			//normal mapping
+			bumb.z = bumb.z * (vPosition.z * 0.9);
 
-			vec4 diffuseColor = texture2D(texture1, vUv);
+			bumb = normalize(bumb);
 
-			vec4 nTexture = texture2D(normalTexture, vUv);
-			vec3 nColor = nTexture.rgb * 2.0 - 1.0;
+			float NdotL = max(dot(bumb, vLightVec), 0.0);
 
-			vec3 vLightDir = vec3(vLight.xy - (gl_FragCoord.xy / resolution.xy), vLight.z);
+			vec4 diffuse = NdotL * Diffuse;
 
-			vLightDir.x *= resolution.x / resolution.y;
+			float NdotHV = max(dot(normalize(reflect(vLightVec, bumb)), normalize(-viewVec)), 0.0);
 
-			float D = length(vLightDir);
+			vec4 specular = Specular * pow(NdotHV, 10.0);
 
-			vec3 N = normalize(nColor);
-			vec3 L = normalize(vLightDir);
 
-			vec3 diffuse = vLightColor.rgb * max(dot(N, L), 0.0);
 
-			vec3 ambient = vec3(1.0, 1.0, 1.0) * (0.8);
 
-			vec3 intensity = ambient + diffuse;
-			vec3 finalColor = diffuse.rgb * intensity;
 
-		    gl_FragColor = vec4(vPosition, 0.5);
+		    gl_FragColor = vec4(color.xyz * (diffuse.xyz + specular.xyz + Ambient.rgb), 1.0) * color;
 		}  
 		</script>
 </head>
@@ -165,12 +136,7 @@
 		camera.position.x = 2;
 		camera.position.y = 2;
 
-		
 		guiInit();
-
-		var light = new t.PointLight(0xffffff);
-		light.position.set(0, 5, 0);
-		scene.add(light);
 
 		var object = createObject();
 
@@ -178,7 +144,6 @@
 
 		scene.add(axisHelper);
 		scene.add(object);
-		scene.add(light);
 
 		render();
 
