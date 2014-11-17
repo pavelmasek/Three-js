@@ -8,30 +8,62 @@ function guiInit(){
 
 	var coordinatesFolder = gui.addFolder("Coordinates");
 	coordinatesFolder.add({x: 0}, 'x').onChange(function(value){
-		objectPosition.x = value;
+		object.position.x = value;
 	});
-	coordinatesFolder.add({y: 0}, 'y');
-	coordinatesFolder.add({z: 0}, 'z');
+	coordinatesFolder.add({y: 0}, 'y').onChange(function(value){
+		object.position.y = value;
+	});
+	coordinatesFolder.add({z: 0}, 'z').onChange(function(value){
+		object.position.z = value;
+	});
 	coordinatesFolder.open();
 	
-	var textureOption = gui.add({texture: 'metal'}, 'texture', ['brick', 'metal', 'rock']).listen();
-	textureOption.onChange(function(value){
-		switch(value){
-			case "brick": 
-				textureType = textures[1];
-				break;
-			case "metal": 
-				textureType = textures[2];
-				break;
-			case "rock": 
-				textureType = textures[0];
-				break;
-			default:
-				console.log('default texture'); 	
-		}
-	});
+	// var textureOption = gui.add({texture: 'metal'}, 'texture', ['brick', 'metal', 'rock']).listen();
+	// textureOption.onChange(function(value){
+	// 	switch(value){
+	// 		case "brick": 
+	// 			textureType = textures[1];
+	// 			object.material.uniforms.texture.value = setTexture(textureType.diffuse);
+	// 			object.material.uniforms.normalTexture.value = setTexture(textureType.normal);
+	// 			object.material.uniforms.heightTexture.value = setTexture(textureType.height);
+	// 			break;
+	// 		case "metal": 
+	// 			textureType = textures[2];
+	// 			object.material.uniforms.texture.value = setTexture(textureType.diffuse);
+	// 			object.material.uniforms.normalTexture.value = setTexture(textureType.normal);
+	// 			object.material.uniforms.heightTexture.value = setTexture(textureType.height);
+	// 			break;
+	// 		case "rock": 
+	// 			textureType = textures[0];
+	// 			object.material.uniforms.texture.value = setTexture(textureType.diffuse);
+	// 			object.material.uniforms.normalTexture.value = setTexture(textureType.normal);
+	// 			object.material.uniforms.heightTexture.value = setTexture(textureType.height);
+	// 			break;
+	// 		default:
+	// 			console.log('default texture'); 	
+	// 	}
+	// });
 
 	// var wireFrame = gui.add(wireframe,'wireframe');
+
+	var shapeOption = gui.add({shape: 'tube'}, 'shape', ['tube', 'other']).listen();
+	shapeOption.onChange(function(value){
+		switch(value){
+			case "tube": 
+				object.material.vertexShader = document.getElementById('vertexShader').textContent;
+				object.material.fragmentShader = document.getElementById('fragmentShader').textContent;
+				object.material.needsUpdate = true;
+				break;
+			case "other":
+				object.material.vertexShader = document.getElementById('vertexShader2').textContent;
+				object.material.fragmentShader = document.getElementById('fragmentShader2').textContent;
+				object.material.needsUpdate = true;
+				console.log('other');
+				break;
+			default: 
+				console.log('default');
+		}
+	});
 
 	var lightPosition = gui.addFolder("Light position");
 	lightPosition.add({x: 5}, 'x').onChange(function(value){

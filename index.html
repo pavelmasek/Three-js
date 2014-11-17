@@ -20,6 +20,30 @@
 			height: 100%;
 		}
 	</style>
+
+	<script id="vertexShader2" type="x-shader/x-vertex">
+		
+		varying vec3 vPosition;
+		varying vec2 vUv;
+
+		void main(){
+			vUv = uv;
+			vPosition = position;
+			vPosition.z  = sin(position.x) *sin(position.y) ;
+			gl_Position = projectionMatrix * modelViewMatrix * vec4(vPosition, 1.0);
+		}
+
+	</script>
+
+	<script id="fragmentShader2" type="x-shader/x-fragment"> 
+		varying vec3 vPosition;
+
+		void main(){
+			gl_FragColor = vec4(vPosition, 1.0);
+		}
+
+	</script>
+
 	<script id="vertexShader" type="x-shader/x-vertex">
 		
 		varying vec2 vUv;
@@ -54,7 +78,7 @@
 		</script>
 
 		<!-- fragment shader a.k.a. pixel shader -->
-		<script id="fragmentShader" type="x-shader/x-vertex"> 
+		<script id="fragmentShader" type="x-shader/x-fragment"> 
 		
 		varying vec2 vUv;
 		varying vec3 vPosition;
@@ -139,9 +163,20 @@
 		guiInit();
 
 		var object = createObject();
+	
+		object.material.needsUpdate = true;
 
 		var axisHelper = new t.AxisHelper(1);
 
+		var sphereLight = new t.Mesh(new t.SphereGeometry(2, 16, 16), new t.MeshNormalMaterial({ 
+			color: light.color,
+			autoUpdate: true,
+			light: false
+		}));
+		sphereLight.position.set(light.position);
+		
+		scene.add(camera);
+		scene.add(sphereLight);
 		scene.add(axisHelper);
 		scene.add(object);
 
