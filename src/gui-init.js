@@ -23,21 +23,15 @@ function guiInit(){
 		switch(value){
 			case "brick": 
 				textureType = textures[1];
-				shape.material.uniforms.texture.value = setTexture(textureType.diffuse);
-				shape.material.uniforms.normalTexture.value = setTexture(textureType.normal);
-				shape.material.uniforms.heightTexture.value = setTexture(textureType.height);
+				changeTexture(textureType);
 				break;
 			case "metal": 
 				textureType = textures[2];
-				shape.material.uniforms.texture.value = setTexture(textureType.diffuse);
-				shape.material.uniforms.normalTexture.value = setTexture(textureType.normal);
-				shape.material.uniforms.heightTexture.value = setTexture(textureType.height);
+				changeTexture(textureType);
 				break;
 			case "rock": 
 				textureType = textures[0];
-				shape.material.uniforms.texture.value = setTexture(textureType.diffuse);
-				shape.material.uniforms.normalTexture.value = setTexture(textureType.normal);
-				shape.material.uniforms.heightTexture.value = setTexture(textureType.height);
+				changeTexture(textureType);
 				break;
 			default:
 				console.log('default texture'); 	
@@ -87,6 +81,12 @@ function guiInit(){
 	});
 
 	gui.open();
+
+	function changeTexture(textureType){
+		shape.material.uniforms.texture.value = setTexture(textureType.diffuse);
+		shape.material.uniforms.normalTexture.value = setTexture(textureType.normal);
+		shape.material.uniforms.heightTexture.value = setTexture(textureType.height);
+	}
 
 	//GUI END
 }

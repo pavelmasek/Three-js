@@ -54,7 +54,7 @@ function createObject(){
 
 	var material = new t.ShaderMaterial({
 		uniforms: uniforms1,
-		vertexShader: document.getElementById('vertexShader').textContent,
+		vertexShader: document.getElementById('vertexShaderCartesian').textContent,
 		fragmentShader: document.getElementById('fragmentShader').textContent,
 		attributes: attributes,
 		wireframe: wireframe,
