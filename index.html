@@ -93,8 +93,8 @@
 
 
 
-			float azimuth = position.x * 2.0 * PI; 
-		    float zenith = position.y * PI;
+			float azimuth = position.x * 1.0 * PI; 
+		    float zenith = position.y * 0.5 * PI;
 		    
 		    float rho = 1.0 + 0.2 * sin(6.0 * azimuth) * sin(5.0 * zenith);
 		    
@@ -125,15 +125,15 @@
 
 
 
-			float s = position.y * 2.0 * PI; 
-		    float t = position.x * 2.0 * PI; 
+			float s = position.y * PI; 
+		    float t = position.x * PI; 
 		    float theta = s;
-		    float r = t;
+		    float r = t * 0.5;
 		    
 
 		    vPosition.x  = r*sin(theta);
 		    vPosition.y  = r*cos(theta);
-		    vPosition.z  = 2.0*sin(t);
+		    vPosition.z  = sin(t);
 
 			vLightVec = normalize(vLight - position);
 
@@ -159,15 +159,15 @@
 
 
 
-			float s = position.x * -2.0 * PI; 
-		    float t = position.y * 2.0 * PI; 
+			float s = position.x * -1.0 * PI; 
+		    float t = position.y * 1.0 * PI; 
 		    float theta = s;
-		    float r = t;
+		    float r = t * 0.5;
 		    
 
 		    vPosition.x  = r*sin(s);
 		    vPosition.y  = r*cos(s);
-		    vPosition.z  = 2.0*t/E;
+		    vPosition.z  = t/E;
 
 			vLightVec = normalize(vLight - position);
 
@@ -192,10 +192,10 @@
 
 
 
-			float azimuth = position.x * 2.0 * PI; 
+			float azimuth = position.x * 0.5 * PI; 
 		    float zenith = position.y * PI;
 		    
-		    float rho = 1.0 + sin(2.0*zenith);
+		    float rho = sin(2.0*azimuth);
 		    
 
 		    vPosition.x  = rho * sin(azimuth) * cos(zenith);
@@ -219,12 +219,15 @@
 		uniform sampler2D texture;
 		uniform sampler2D normalTexture;
 		uniform sampler2D heightTexture;
+		uniform sampler2D specTexture;
 		uniform vec3 camPosition;
+		uniform float textureMode;
+
 
 		vec4 Ambient = vec4(0.3, 0.3, 0.3, 1);
 		vec4 Specular = vec4(0.9, 0.9, 0.9, 1);
 
-		vec2 cBumpSize = vec2 (0.04, -0.02);
+		vec2 bumpSize = vec2 (0.04, -0.02);
 
 		void main() 
 		{
@@ -234,7 +237,7 @@
 
 			float height = texture2D(heightTexture, vUv).r;
 
-			height = height * cBumpSize.x + cBumpSize.y;
+			height = height * bumpSize.x + bumpSize.y;
 
 			vec2 texUV = vUv.xy + viewVec.xy * height;
 
@@ -242,7 +245,7 @@
 
 			vec3 bumb = texture2D(normalTexture, texUV.xy).rgb * 2.0 - 1.0;
 
-			bumb.z = bumb.z * (vPosition.z * 0.9);
+			bumb.z = bumb.z * vPosition.z;
 
 			bumb = normalize(bumb);
 
@@ -253,8 +256,10 @@
 			float NdotHV = max(dot(normalize(reflect(vLightVec, bumb)), normalize(-viewVec)), 0.0);
 
 			vec4 specular = Specular * pow(NdotHV, 10.0);
-
-		    gl_FragColor = vec4(color.xyz * (diffuse.xyz + specular.xyz + Ambient.rgb), 1.0) * color;
+			if(textureMode == 1.0)
+		    	gl_FragColor = vec4(color.xyz * (diffuse.xyz + specular.xyz + Ambient.rgb), 1.0) * color;
+		    if(textureMode == 0.0)
+		    	gl_FragColor = vec4(vPosition, 1.0);
 		}  
 		</script>
 

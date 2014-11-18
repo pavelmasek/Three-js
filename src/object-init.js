@@ -5,30 +5,36 @@ var textures = [{
 	name: "rock",
 	diffuse: "img/textures/rock-texture_DIFFUSE.png",
 	normal: "img/textures/rock-texture_NORMAL.png",
-	disp: "img/textures/rock-texture_DISP.png"
+	disp: "img/textures/rock-texture_DISP.png",
+	specular: "img/textures/rock-texture_SPEC.png"
 },{
 	name: "brick",
 	diffuse: "img/textures/brick-texture_DIFFUSE.png",
 	normal: "img/textures/brick-texture_NORMAL.png",
-	disp: "img/textures/brick-texture_DISP.png"
+	disp: "img/textures/brick-texture_DISP.png",
+	specular: "img/textures/brick-texture_SPEC.png"
 },{
 	name: "metal",
 	diffuse: "img/textures/metal-texture_DIFFUSE.png",
 	normal: "img/textures/metal-texture_NORMAL.png",
-	disp: "img/textures/metal-texture_DISP.png"
+	disp: "img/textures/metal-texture_DISP.png",
+	specular: "img/textures/metal-texture_SPEC.png"
 }]
 var textureType = textures[1];
+var textureMode = 1;
 
 function createObject(){
 
 
-	var geometry = new t.PlaneGeometry(2, 2, 50, 50);
+	var geometry = new t.PlaneGeometry(2, 2, 100, 100);
 
 	var texture = setTexture(textureType.diffuse);
 
 	var normalTexture = setTexture(textureType.normal);
 
 	var heightTexture = setTexture(textureType.disp);
+
+	var specTexture = setTexture(textureType.specular)
 
 	var resolution = new t.Vector2(window.innerWidth, window.innerHeight);
 
@@ -45,7 +51,9 @@ function createObject(){
 		"texture": { type: 't', value: texture},
 		"normalTexture": {type: 't', value: normalTexture},
 		"heightTexture": {type: 't', value: heightTexture},
-		"camPosition": {type: 'v3', value: camera.position}
+		"specTexture": {type: 't', value: specTexture},
+		"camPosition": {type: 'v3', value: camera.position},
+		"textureMode": {type: 'f', value: textureMode}
 	}
 
 	var attributes = {

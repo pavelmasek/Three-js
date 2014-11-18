@@ -18,7 +18,7 @@ function guiInit(){
 	});
 	coordinatesFolder.open();
 	
-	var textureOption = gui.add({texture: 'brick'}, 'texture', ['brick', 'metal', 'rock']).listen();
+	var textureOption = gui.add({texture: 'brick'}, 'texture', ['brick', 'metal', 'rock', 'position color']).listen();
 	textureOption.onChange(function(value){
 		switch(value){
 			case "brick": 
@@ -32,6 +32,10 @@ function guiInit(){
 			case "rock": 
 				textureType = textures[0];
 				changeTexture(textureType);
+				break;
+			case "position color": 
+				shape.material.uniforms.textureMode.value = 0.0;
+				shape.material.needsUpdate = true;
 				break;
 			default:
 				console.log('default texture'); 	
@@ -101,6 +105,9 @@ function guiInit(){
 		shape.material.uniforms.texture.value = setTexture(textureType.diffuse);
 		shape.material.uniforms.normalTexture.value = setTexture(textureType.normal);
 		shape.material.uniforms.heightTexture.value = setTexture(textureType.height);
+		shape.material.uniforms.textureMode.value = 1.0;
+		shape.material.needsUpdate = true;
+
 	}
 
 	//GUI END
