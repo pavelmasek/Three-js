@@ -26,7 +26,7 @@ var textureMode = 1;
 function createObject(){
 
 
-	var geometry = new t.PlaneGeometry(2, 2, 100, 100);
+	var geometry = new t.PlaneGeometry(2, 2, 30, 30);
 
 	var texture = setTexture(textureType.diffuse);
 

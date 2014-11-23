@@ -94,10 +94,10 @@ function guiInit(){
 	});
 	lightPosition.open();
 
-	var cubeColor = gui.addColor({color: "#ffffff"}, 'color');
-	cubeColor.onChange(function(value){
-		light.color = value;
-	});
+	// var cubeColor = gui.addColor({color: "#ffffff"}, 'color');
+	// cubeColor.onChange(function(value){
+	// 	light.color = value;
+	// });
 
 	gui.open();
 
